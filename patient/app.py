@@ -8,4 +8,4 @@ def get_assay():
 	return json.dumps({1:"John Snow", 2:"Ned Stark", 3:"Tyrion Lannister"})
 
 if __name__ == '__main__':
-	app.run()
+	app.run(host='0.0.0.0', port=5000)

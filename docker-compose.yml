@@ -1,8 +1,12 @@
 patient:
-	build: ./patient
+  build: ./patient
+  ports: 
+    - "5000"
 mutation:
-	build: ./mutation
+  build: ./mutation
+  ports: 
+    - "5000"
 assay:
-	build: ./assay
-
-
+  build: ./assay
+  ports: 
+    - "5000"
