@@ -1,0 +1,8 @@
+patient:
+	build: ./patient
+mutation:
+	build: ./mutation
+assay:
+	build: ./assay
+
+
