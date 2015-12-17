@@ -1,0 +1,19 @@
+{{range $tag, $services := services | byTag}}upstream {{$tag}}-services {
+	{{range $services}}{{range service .Name}}server {{.Address}}:{{.Port}} max_fails=3 fail_timeout=60 weight=1;{{end}}
+	{{end}}
+}
+{{end}}
+
+server {
+        listen 80 default_server;
+
+        charset utf-8;
+
+        {{range $tag, $services := services | byTag}}location /{{$tag}}/ {
+                proxy_pass http://{{$tag}}-services/{{$tag}};
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+        }
+	{{end}}
+} 

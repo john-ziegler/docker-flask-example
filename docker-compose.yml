@@ -1,12 +1,53 @@
+consul:
+  image: gliderlabs/consul-server
+  command: -bootstrap
+  container_name: consul
+  ports:
+    - "8500:8500"
 patient:
   build: ./patient
   ports: 
     - "5000"
-mutation:
-  build: ./mutation
-  ports: 
+  environment:
+    - SERVICE_NAME=web-patient
+    - SERVICE_TAGS=patient
+anotherpatient:
+  build: ./patient
+  ports:
     - "5000"
+  environment:
+    - SERVICE_NAME=web-another-patient
+    - SERVICE_TAGS=patient
 assay:
   build: ./assay
   ports: 
     - "5000"
+  environment:
+    - SERVICE_NAME=web-assay
+    - SERVICE_TAGS=assay
+anotherassay:
+  build: ./assay
+  ports:
+    - "5000"
+  environment:
+    - SERVICE_NAME=web-another-assay
+    - SERVICE_TAGS=assay
+registrator:
+  image: gliderlabs/registrator:latest
+  command:  -ip 192.168.99.102 consul://${CONSUL_IP}:8500
+  container_name: registrator
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+  links:
+    - consul
+nginxreverseproxy:
+  build: ./nginx-reverse-proxy
+  ports:
+    - "8080:80"
+  environment:
+    - CONSUL_URL=${CONSUL_IP}:8500
+  links:
+    - consul
+  volumes:
+    - ./nginx-reverse-proxy/service.ctmpl:/templates/service.ctmpl
+  container_name: nginx-reverse-proxy
